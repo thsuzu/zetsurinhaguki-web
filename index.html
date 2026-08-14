@@ -205,6 +205,28 @@
       text-transform: uppercase;
     }
 
+    /* トップテキスト画像（スライドショー上に固定） */
+    .hero-toptext {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, calc(-50% - 55px));
+      z-index: 3;
+      max-height: 52vh;
+      max-width: 70%;
+      width: auto;
+      height: auto;
+      pointer-events: none;
+    }
+
+    @media (max-width: 767px) {
+      .hero-toptext {
+        max-height: 42vh;
+        max-width: 62%;
+        transform: translate(-50%, calc(-50% - 44px));
+      }
+    }
+
     /* スライドインジケーター */
     .slide-dots {
       position: absolute;
@@ -626,6 +648,8 @@
     </div>
 
     <div class="hero-overlay"></div>
+
+    <img class="hero-toptext" src="images/toptext.png" alt="">
 
     <div class="hero-caption">
       <div class="band-name">絶リン<em>★</em>ハグキ</div>
