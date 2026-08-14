@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>絶リン★ハグキ | Official Website</title>
+  <style>
+    /* ===== Base ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-bg:      #0a0a0a;
+      --color-surface: #141414;
+      --color-border:  #2a2a2a;
+      --color-accent:  #e60033;
+      --color-gold:    #c8a84b;
+      --color-text:    #e8e8e8;
+      --color-muted:   #888;
+      --font-ja:       'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+      --nav-h:         64px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-ja);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    ul { list-style: none; }
+
+    /* ===== Section共通 ===== */
+    .section {
+      padding: 80px 24px;
+    }
+
+    .section-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--color-text);
+      border-left: 4px solid var(--color-accent);
+      padding-left: 16px;
+      margin-bottom: 48px;
+    }
+
+    .section-title span {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--color-muted);
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
+    /* ===== ヘッダー / ナビ ===== */
+    #header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-h);
+      background: rgba(10,10,10,0.9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--color-border);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .site-logo {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      color: var(--color-text);
+    }
+
+    .site-logo em {
+      color: var(--color-accent);
+      font-style: normal;
+    }
+
+    .nav-list {
+      display: flex;
+      gap: 28px;
+    }
+
+    .nav-list a {
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      transition: color 0.2s;
+    }
+
+    .nav-list a:hover { color: var(--color-text); }
+
+    /* ハンバーガー（スマホ用） */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--color-text);
+      transition: transform 0.25s, opacity 0.25s;
+    }
+
+    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .nav-drawer {
+      display: none;
+    }
+
+    /* ===== ヒーロー / スライドショー ===== */
+    #hero {
+      position: relative;
+      width: 100%;
+      height: 100svh;
+      min-height: 400px;
+      overflow: hidden;
+    }
+
+    /* PCスライドショー */
+    .slideshow {
+      position: absolute;
+      inset: 0;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+    }
+
+    .slide.active { opacity: 1; }
+
+    /* スマホ用は非表示（PCのみ） */
+    .slideshow-mobile { display: none; }
+
+    /* ヒーローオーバーレイ */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.2) 0%,
+        rgba(0,0,0,0.1) 40%,
+        rgba(0,0,0,0.6) 100%
+      );
+      z-index: 2;
+    }
+
+    /* ヒーロータイトル */
+    .hero-caption {
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 3;
+    }
+
+    .hero-caption .band-name {
+      font-size: clamp(28px, 6vw, 56px);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-shadow: 0 2px 16px rgba(0,0,0,0.8);
+    }
+
+    .hero-caption .band-name em {
+      color: var(--color-accent);
+      font-style: normal;
+    }
+
+    .hero-caption .tagline {
+      font-size: clamp(11px, 1.5vw, 14px);
+      letter-spacing: 0.25em;
+      color: rgba(255,255,255,0.7);
+      margin-top: 8px;
+      text-transform: uppercase;
+    }
+
+    /* スライドインジケーター */
+    .slide-dots {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 4;
+    }
+
+    .slide-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      transition: background 0.3s;
+      cursor: pointer;
+    }
+
+    .slide-dot.active { background: var(--color-accent); }
+
+    /* ===== NEWS ===== */
+    #news { background: var(--color-bg); }
+
+    .news-list { display: flex; flex-direction: column; gap: 0; }
+
+    .news-item {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--color-border);
+      transition: background 0.15s;
+    }
+
+    .news-item:hover { background: rgba(255,255,255,0.02); }
+
+    .news-date {
+      font-size: 12px;
+      color: var(--color-muted);
+      white-space: nowrap;
+      letter-spacing: 0.05em;
+    }
+
+    .news-tag {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      padding: 2px 8px;
+      border: 1px solid var(--color-accent);
+      color: var(--color-accent);
+      white-space: nowrap;
+    }
+
+    .news-body { flex: 1; font-size: 14px; }
+
+    /* ===== LIVE ===== */
+    #live { background: var(--color-surface); }
+
+    .live-list { display: flex; flex-direction: column; gap: 0; }
+
+    .live-item {
+      display: grid;
+      grid-template-columns: 100px 1fr auto;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .live-date-block { text-align: center; }
+
+    .live-date-block .month {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--color-accent);
+      text-transform: uppercase;
+    }
+
+    .live-date-block .day {
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .live-date-block .year {
+      font-size: 11px;
+      color: var(--color-muted);
+    }
+
+    .live-info .live-title { font-size: 15px; font-weight: 700; }
+
+    .live-info .live-venue {
+      font-size: 13px;
+      color: var(--color-muted);
+      margin-top: 4px;
+    }
+
+    .live-ticket {
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      border: 1px solid var(--color-border);
+      padding: 6px 14px;
+      color: var(--color-muted);
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .live-ticket:hover {
+      border-color: var(--color-text);
+      color: var(--color-text);
+    }
+
+    /* ===== DISCOGRAPHY ===== */
+    #discography { background: var(--color-bg); }
+
+    .disc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 28px;
+    }
+
+    .disc-item {}
+
+    .disc-cover {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-muted);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+
+    .disc-type {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .disc-title { font-size: 14px; font-weight: 700; }
+
+    .disc-date { font-size: 12px; color: var(--color-muted); margin-top: 4px; }
+
+    /* ===== MEMBERS ===== */
+    #members { background: var(--color-surface); }
+
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 32px;
+    }
+
+    .member-card { text-align: center; }
+
+    .member-photo {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: var(--color-border);
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+
+    .member-part {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .member-name { font-size: 16px; font-weight: 700; letter-spacing: 0.05em; }
+
+    .member-name-read {
+      font-size: 11px;
+      color: var(--color-muted);
+      margin-top: 2px;
+    }
+
+    /* ===== CONTACT ===== */
+    #contact { background: var(--color-bg); }
+
+    .contact-body {
+      max-width: 560px;
+    }
+
+    .contact-body p {
+      font-size: 14px;
+      color: var(--color-muted);
+      margin-bottom: 32px;
+      line-height: 1.8;
+    }
+
+    .contact-form { display: flex; flex-direction: column; gap: 16px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+    .form-group label { font-size: 12px; letter-spacing: 0.1em; color: var(--color-muted); }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+      padding: 10px 14px;
+      font-family: var(--font-ja);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--color-accent);
+    }
+
+    .form-group textarea { resize: vertical; min-height: 120px; }
+
+    .btn-submit {
+      align-self: flex-start;
+      background: var(--color-accent);
+      color: #fff;
+      border: none;
+      padding: 12px 36px;
+      font-family: var(--font-ja);
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-submit:hover { opacity: 0.85; }
+
+    /* ===== フッター ===== */
+    #footer {
+      background: #050505;
+      border-top: 1px solid var(--color-border);
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+    }
+
+    .footer-logo em { color: var(--color-accent); font-style: normal; }
+
+    .footer-sns {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .footer-sns a img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .footer-sns a:hover img { opacity: 1; }
+
+    .footer-copy {
+      font-size: 11px;
+      color: var(--color-muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ===== スクロールトップボタン ===== */
+    .scroll-top {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 44px;
+      height: 44px;
+      background: var(--color-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 50;
+      border: none;
+    }
+
+    .scroll-top.visible { opacity: 1; pointer-events: auto; }
+
+    .scroll-top svg { width: 16px; height: 16px; fill: #fff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 767px) {
+      /* スマホ用スライドショーに切り替え */
+      .slideshow-pc   { display: none; }
+      .slideshow-mobile { display: block; }
+
+      /* ナビ */
+      .nav-list { display: none; }
+      .nav-toggle { display: flex; }
+
+      /* ドロワーナビ */
+      .nav-drawer {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: var(--nav-h);
+        left: 0;
+        right: 0;
+        background: rgba(10,10,10,0.97);
+        border-bottom: 1px solid var(--color-border);
+        padding: 20px 24px 28px;
+        gap: 0;
+        transform: translateY(-110%);
+        transition: transform 0.3s ease;
+        z-index: 99;
+      }
+
+      .nav-drawer.open { transform: translateY(0); }
+
+      .nav-drawer a {
+        padding: 14px 0;
+        font-size: 14px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--color-border);
+        color: var(--color-text);
+      }
+
+      /* セクション */
+      .section { padding: 60px 16px; }
+
+      /* LIVE */
+      .live-item {
+        grid-template-columns: 70px 1fr;
+        gap: 12px;
+      }
+      .live-ticket { display: none; }
+      .live-date-block .day { font-size: 28px; }
+
+      /* Disc */
+      .disc-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+      /* Members */
+      .members-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    }
+
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .disc-grid { grid-template-columns: repeat(3, 1fr); }
+      .members-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== ヘッダー ===== -->
+  <header id="header">
+    <div class="site-logo">絶リン<em>★</em>ハグキ</div>
+    <nav>
+      <ul class="nav-list">
+        <li><a href="#news">News</a></li>
+        <li><a href="#live">Live</a></li>
+        <li><a href="#discography">Discography</a></li>
+        <li><a href="#members">Members</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="メニューを開く">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- スマホ ドロワーナビ -->
+  <nav class="nav-drawer" id="navDrawer">
+    <a href="#news"        onclick="closeDrawer()">News</a>
+    <a href="#live"        onclick="closeDrawer()">Live</a>
+    <a href="#discography" onclick="closeDrawer()">Discography</a>
+    <a href="#members"     onclick="closeDrawer()">Members</a>
+    <a href="#contact"     onclick="closeDrawer()">Contact</a>
+  </nav>
+
+  <!-- ===== ヒーロー / スライドショー ===== -->
+  <section id="hero">
+
+    <!-- PC用スライドショー（4枚） -->
+    <div class="slideshow slideshow-pc" id="slideshowPc">
+      <div class="slide" style="background-image:url('images/top/top1.jpg')"></div>
+      <div class="slide" style="background-image:url('images/top/top2.jpg')"></div>
+      <div class="slide" style="background-image:url('images/top/top3.JPG')"></div>
+      <div class="slide" style="background-image:url('images/top/top4.jpg')"></div>
+    </div>
+
+    <!-- スマホ用スライドショー（3枚） -->
+    <div class="slideshow slideshow-mobile" id="slideshowMobile">
+      <div class="slide" style="background-image:url('images/top/m_top/130409136.JPG')"></div>
+      <div class="slide" style="background-image:url('images/top/m_top/130409227.jpg')"></div>
+      <div class="slide" style="background-image:url('images/top/m_top/130409269.jpg')"></div>
+    </div>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-caption">
+      <div class="band-name">絶リン<em>★</em>ハグキ</div>
+      <div class="tagline">Official Website</div>
+    </div>
+
+    <div class="slide-dots" id="slideDots"></div>
+  </section>
+
+  <!-- ===== NEWS ===== -->
+  <section class="section" id="news">
+    <div class="section-inner">
+      <h2 class="section-title">News <span>最新情報</span></h2>
+      <ul class="news-list">
+        <li class="news-item">
+          <span class="news-date">2026.08.14</span>
+          <span class="news-tag">LIVE</span>
+          <span class="news-body">〇〇ライブハウスにて単独公演決定！詳細は近日公開予定です。</span>
+        </li>
+        <li class="news-item">
+          <span class="news-date">2026.07.20</span>
+          <span class="news-tag">RELEASE</span>
+          <span class="news-body">新曲「ダミータイトル」配信スタート！各ストリーミングサービスで聴けます。</span>
+        </li>
+        <li class="news-item">
+          <span class="news-date">2026.06.01</span>
+          <span class="news-tag">INFO</span>
+          <span class="news-body">オフィシャルサイトをリニューアルしました。今後ともよろしくお願いします。</span>
+        </li>
+        <li class="news-item">
+          <span class="news-date">2026.05.15</span>
+          <span class="news-tag">LIVE</span>
+          <span class="news-body">〇〇フェス出演決定！タイムテーブルは後日発表します。</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== LIVE ===== -->
+  <section class="section" id="live">
+    <div class="section-inner">
+      <h2 class="section-title">Live <span>ライブ情報</span></h2>
+      <ul class="live-list">
+        <li class="live-item">
+          <div class="live-date-block">
+            <div class="month">Sep</div>
+            <div class="day">12</div>
+            <div class="year">2026</div>
+          </div>
+          <div class="live-info">
+            <div class="live-title">絶リン★ハグキ ワンマンライブ「仮タイトル」</div>
+            <div class="live-venue">東京 〇〇HALL</div>
+          </div>
+          <a class="live-ticket" href="#">TICKET</a>
+        </li>
+        <li class="live-item">
+          <div class="live-date-block">
+            <div class="month">Oct</div>
+            <div class="day">03</div>
+            <div class="year">2026</div>
+          </div>
+          <div class="live-info">
+            <div class="live-title">〇〇フェス2026 出演</div>
+            <div class="live-venue">大阪 〇〇野外ステージ</div>
+          </div>
+          <a class="live-ticket" href="#">TICKET</a>
+        </li>
+        <li class="live-item">
+          <div class="live-date-block">
+            <div class="month">Nov</div>
+            <div class="day">28</div>
+            <div class="year">2026</div>
+          </div>
+          <div class="live-info">
+            <div class="live-title">年末スペシャルライブ（仮）</div>
+            <div class="live-venue">名古屋 〇〇CLUB</div>
+          </div>
+          <a class="live-ticket" href="#">TICKET</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== DISCOGRAPHY ===== -->
+  <section class="section" id="discography">
+    <div class="section-inner">
+      <h2 class="section-title">Discography <span>ディスコグラフィー</span></h2>
+      <div class="disc-grid">
+        <div class="disc-item">
+          <div class="disc-cover">JACKET</div>
+          <div class="disc-type">Single</div>
+          <div class="disc-title">ダミーシングルA</div>
+          <div class="disc-date">2026.04.01</div>
+        </div>
+        <div class="disc-item">
+          <div class="disc-cover">JACKET</div>
+          <div class="disc-type">Single</div>
+          <div class="disc-title">ダミーシングルB</div>
+          <div class="disc-date">2025.11.20</div>
+        </div>
+        <div class="disc-item">
+          <div class="disc-cover">JACKET</div>
+          <div class="disc-type">Album</div>
+          <div class="disc-title">ダミーアルバム</div>
+          <div class="disc-date">2025.06.10</div>
+        </div>
+        <div class="disc-item">
+          <div class="disc-cover">JACKET</div>
+          <div class="disc-type">EP</div>
+          <div class="disc-title">ダミーEP</div>
+          <div class="disc-date">2024.09.05</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MEMBERS ===== -->
+  <section class="section" id="members">
+    <div class="section-inner">
+      <h2 class="section-title">Members <span>メンバー</span></h2>
+      <div class="members-grid">
+        <div class="member-card">
+          <div class="member-photo">PHOTO</div>
+          <div class="member-part">Vocal</div>
+          <div class="member-name">仮名 太郎</div>
+          <div class="member-name-read">Kanna Taro</div>
+        </div>
+        <div class="member-card">
+          <div class="member-photo">PHOTO</div>
+          <div class="member-part">Guitar</div>
+          <div class="member-name">仮名 次郎</div>
+          <div class="member-name-read">Kanna Jiro</div>
+        </div>
+        <div class="member-card">
+          <div class="member-photo">PHOTO</div>
+          <div class="member-part">Bass</div>
+          <div class="member-name">仮名 三郎</div>
+          <div class="member-name-read">Kanna Saburo</div>
+        </div>
+        <div class="member-card">
+          <div class="member-photo">PHOTO</div>
+          <div class="member-part">Drums</div>
+          <div class="member-name">仮名 四郎</div>
+          <div class="member-name-read">Kanna Shiro</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section class="section" id="contact">
+    <div class="section-inner">
+      <h2 class="section-title">Contact <span>お問い合わせ</span></h2>
+      <div class="contact-body">
+        <p>
+          ライブ出演・取材・メディア掲載などのご依頼、その他ご質問は<br>
+          下記フォームよりお気軽にお問い合わせください。
+        </p>
+        <form class="contact-form" onsubmit="return false;">
+          <div class="form-group">
+            <label>お名前</label>
+            <input type="text" placeholder="山田 太郎">
+          </div>
+          <div class="form-group">
+            <label>メールアドレス</label>
+            <input type="email" placeholder="example@email.com">
+          </div>
+          <div class="form-group">
+            <label>お問い合わせ種別</label>
+            <select>
+              <option value="">選択してください</option>
+              <option>ライブ出演依頼</option>
+              <option>メディア・取材</option>
+              <option>その他</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>内容</label>
+            <textarea placeholder="お問い合わせ内容をご記入ください"></textarea>
+          </div>
+          <button class="btn-submit" type="submit">送信する</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== フッター ===== */
+  <footer id="footer">
+    <div class="footer-logo">絶リン<em>★</em>ハグキ</div>
+    <div class="footer-sns">
+      <a href="#" aria-label="X (Twitter)">
+        <img src="images/banner/X_b.png" alt="X">
+      </a>
+      <a href="#" aria-label="LINE">
+        <img src="images/banner/line_b.png" alt="LINE">
+      </a>
+      <a href="#" aria-label="YouTube">
+        <img src="images/banner/yt_b.png" alt="YouTube">
+      </a>
+    </div>
+    <p class="footer-copy">&copy; 2026 絶リン★ハグキ All Rights Reserved.</p>
+  </footer>
+
+  <!-- スクロールトップボタン -->
+  <button class="scroll-top" id="scrollTop" aria-label="ページトップへ" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg viewBox="0 0 24 24"><path d="M12 4l-8 8h5v8h6v-8h5z"/></svg>
+  </button>
+
+  <script>
+    /* ===== スライドショー ===== */
+    function initSlideshow(containerId, dotsId, interval) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      const slides = container.querySelectorAll('.slide');
+      const dotsWrap = document.getElementById(dotsId);
+      let current = 0;
+      let timer;
+
+      // ドットを生成（PCスライドのみ共有ドットエリアを使う）
+      if (dotsWrap) {
+        dotsWrap.innerHTML = '';
+        slides.forEach((_, i) => {
+          const dot = document.createElement('button');
+          dot.className = 'slide-dot' + (i === 0 ? ' active' : '');
+          dot.setAttribute('aria-label', `スライド ${i + 1}`);
+          dot.addEventListener('click', () => goTo(i));
+          dotsWrap.appendChild(dot);
+        });
+      }
+
+      function goTo(index) {
+        slides[current].classList.remove('active');
+        if (dotsWrap) dotsWrap.children[current]?.classList.remove('active');
+        current = (index + slides.length) % slides.length;
+        slides[current].classList.add('active');
+        if (dotsWrap) dotsWrap.children[current]?.classList.add('active');
+      }
+
+      function next() { goTo(current + 1); }
+
+      function start() {
+        timer = setInterval(next, interval);
+      }
+
+      function stop() { clearInterval(timer); }
+
+      // 初期表示
+      slides[0].classList.add('active');
+      start();
+
+      // ホバーで一時停止
+      container.addEventListener('mouseenter', stop);
+      container.addEventListener('mouseleave', start);
+
+      return { goTo, stop };
+    }
+
+    // 画面幅で使うスライドショーを決定
+    const isMobile = () => window.innerWidth < 768;
+
+    let pcShow, mobileShow;
+
+    function setupSlideshows() {
+      if (isMobile()) {
+        pcShow = initSlideshow('slideshowMobile', 'slideDots', 4000);
+      } else {
+        pcShow = initSlideshow('slideshowPc', 'slideDots', 4500);
+      }
+    }
+
+    setupSlideshows();
+
+    /* リサイズ時にリロードで対応（簡易実装） */
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        // ドットを再構築するためページリロードなしで再初期化
+        document.getElementById('slideDots').innerHTML = '';
+        setupSlideshows();
+      }, 400);
+    });
+
+    /* ===== ハンバーガーメニュー ===== */
+    const toggle = document.getElementById('navToggle');
+    const drawer = document.getElementById('navDrawer');
+
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('open');
+      drawer.classList.toggle('open');
+    });
+
+    function closeDrawer() {
+      toggle.classList.remove('open');
+      drawer.classList.remove('open');
+    }
+
+    /* ===== スクロールトップボタン ===== */
+    const scrollTopBtn = document.getElementById('scrollTop');
+    window.addEventListener('scroll', () => {
+      scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+    });
+  </script>
+</body>
+</html>
