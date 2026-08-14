@@ -1,0 +1,12 @@
+{
+  "name": "zetsurinhaguki-bbs-api",
+  "main": "src/index.js",
+  "compatibility_date": "2025-01-01",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "zetsurinhaguki-bbs",
+      "database_id": "2ab95f48-9fce-43ab-b25d-60750bf4ecf0"
+    }
+  ]
+}

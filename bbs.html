@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>絶リン★ハグキ ふぁんBBS</title>
+<style>
+body {
+  background: #ffffff;
+  color: #000000;
+  font-family: "MS ゴシック", "Osaka-等幅", monospace;
+  font-size: 13px;
+  margin: 0;
+  padding: 8px;
+}
+
+#header-table {
+  width: 100%;
+  border: 2px solid #000080;
+  background: #000080;
+  color: #ffffff;
+  padding: 4px 8px;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+#subheader {
+  font-size: 11px;
+  color: #555;
+  margin-bottom: 10px;
+  padding-left: 2px;
+}
+
+#subheader a {
+  color: #0000cc;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #aaaaaa;
+  margin: 8px 0;
+}
+
+/* 投稿フォーム */
+#form-area {
+  border: 1px solid #888888;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  background: #f5f5f5;
+}
+
+#form-area p {
+  margin: 0 0 4px 0;
+  font-weight: bold;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+}
+
+.form-row label {
+  width: 60px;
+  flex-shrink: 0;
+}
+
+.form-row input[type="text"] {
+  border: 1px inset #888;
+  padding: 2px 4px;
+  font-family: inherit;
+  font-size: 13px;
+  width: 220px;
+}
+
+.form-row textarea {
+  border: 1px inset #888;
+  padding: 2px 4px;
+  font-family: inherit;
+  font-size: 13px;
+  width: 360px;
+  height: 60px;
+  resize: vertical;
+}
+
+input[type="submit"] {
+  border: 2px outset #cccccc;
+  background: #dddddd;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 2px 16px;
+  cursor: pointer;
+}
+
+input[type="submit"]:active {
+  border-style: inset;
+}
+
+#msg {
+  color: #cc0000;
+  font-weight: bold;
+  min-height: 16px;
+  margin-top: 4px;
+}
+
+/* 投稿一覧 */
+#posts-area {
+  margin-top: 8px;
+}
+
+.post {
+  border: 1px solid #cccccc;
+  margin-bottom: 6px;
+  background: #ffffff;
+}
+
+.post-header {
+  background: #e8e8f8;
+  border-bottom: 1px solid #cccccc;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+.post-num {
+  color: #008000;
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+.post-name {
+  color: #0000cc;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.post-date {
+  color: #666666;
+}
+
+.post-body {
+  padding: 5px 8px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  line-height: 1.6;
+}
+
+#loading {
+  color: #555;
+  padding: 8px 0;
+}
+
+#footer-area {
+  margin-top: 16px;
+  font-size: 11px;
+  color: #666666;
+  border-top: 1px solid #aaa;
+  padding-top: 6px;
+  text-align: center;
+}
+
+/* スマホ調整 */
+@media (max-width: 480px) {
+  .form-row { flex-direction: column; align-items: flex-start; }
+  .form-row input[type="text"],
+  .form-row textarea { width: 100%; box-sizing: border-box; }
+}
+</style>
+</head>
+<body>
+
+<div id="header-table">★ 絶リン★ハグキ ふぁんBBS ★</div>
+<div id="subheader">
+  ファンのみんなで自由に書き込んでね！ ／
+  <a href="index.html">← 公式サイトへ戻る</a>
+</div>
+
+<div id="form-area">
+  <p>■ 書き込む</p>
+  <form id="bbs-form">
+    <div class="form-row">
+      <label>お名前:</label>
+      <input type="text" id="input-name" placeholder="名無しさん" maxlength="50">
+    </div>
+    <div class="form-row">
+      <label>本文:</label>
+      <textarea id="input-body" maxlength="1000" placeholder="ここに書き込んでね（1000文字以内）"></textarea>
+    </div>
+    <div class="form-row">
+      <label></label>
+      <input type="submit" value="書き込む">
+    </div>
+  </form>
+  <div id="msg"></div>
+</div>
+
+<hr>
+
+<div id="posts-area">
+  <div id="loading">読み込み中...</div>
+</div>
+
+<div id="footer-area">
+  絶リン★ハグキ ふぁんBBS &nbsp;|&nbsp; Powered by Cloudflare D1
+</div>
+
+<script>
+const API = 'https://zetsurinhaguki-bbs-api.heroes777rock.workers.dev';
+
+function formatDate(str) {
+  const d = new Date(str);
+  const pad = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '/' +
+    pad(d.getMonth() + 1) + '/' +
+    pad(d.getDate()) + ' ' +
+    pad(d.getHours()) + ':' +
+    pad(d.getMinutes()) + ':' +
+    pad(d.getSeconds());
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function loadPosts() {
+  const area = document.getElementById('posts-area');
+  try {
+    const res = await fetch(API + '/posts');
+    const posts = await res.json();
+    if (posts.length === 0) {
+      area.innerHTML = '<div style="color:#555;padding:8px 0;">まだ書き込みがありません。最初の一言をどうぞ！</div>';
+      return;
+    }
+    area.innerHTML = posts.map((p, i) => `
+<div class="post">
+  <div class="post-header">
+    <span class="post-num">${posts.length - i}.</span>
+    <span class="post-name">${escHtml(p.name)}</span>
+    <span class="post-date">${formatDate(p.created_at)}</span>
+  </div>
+  <div class="post-body">${escHtml(p.body)}</div>
+</div>`).join('');
+  } catch (e) {
+    area.innerHTML = '<div style="color:#cc0000;">読み込みに失敗しました。しばらくしてからリロードしてください。</div>';
+  }
+}
+
+document.getElementById('bbs-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = document.getElementById('msg');
+  const name = document.getElementById('input-name').value.trim();
+  const body = document.getElementById('input-body').value.trim();
+
+  if (!body) { msg.textContent = '※ 本文を入力してください'; return; }
+
+  msg.textContent = '送信中...';
+  try {
+    const res = await fetch(API + '/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, body }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      document.getElementById('input-body').value = '';
+      msg.textContent = '書き込みました！';
+      setTimeout(() => { msg.textContent = ''; }, 2000);
+      loadPosts();
+    } else {
+      msg.textContent = '※ ' + (data.error || 'エラーが発生しました');
+    }
+  } catch {
+    msg.textContent = '※ 通信エラーが発生しました';
+  }
+});
+
+loadPosts();
+</script>
+</body>
+</html>
