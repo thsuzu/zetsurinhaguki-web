@@ -1117,6 +1117,18 @@
       }
     }
 
+    // 1/50の確率で隠しスライドを追加（PC・モバイル両方）
+    if (Math.floor(Math.random() * 50) === 0) {
+      ['slideshowPc', 'slideshowMobile'].forEach(id => {
+        const container = document.getElementById(id);
+        if (!container) return;
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        slide.style.backgroundImage = "url('images/top/secret.jpg')";
+        container.appendChild(slide);
+      });
+    }
+
     setupSlideshows();
 
     /* リサイズ時にリロードで対応（簡易実装） */
