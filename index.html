@@ -1118,7 +1118,7 @@
     }
 
     // 1/50の確率で隠しスライドを追加（PC・モバイル両方）
-    if (true) { // テスト用：必ず表示（確認後に2%に戻す）
+    if (Math.floor(Math.random() * 50) === 0) {
       ['slideshowPc', 'slideshowMobile'].forEach(id => {
         const container = document.getElementById(id);
         if (!container) return;
