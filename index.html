@@ -335,24 +335,42 @@
 
     .disc-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 28px;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 24px;
     }
 
-    .disc-item {}
+    .disc-item { cursor: pointer; }
 
-    .disc-cover {
+    .disc-jacket-wrap {
+      position: relative;
       width: 100%;
       aspect-ratio: 1;
       background: var(--color-surface);
       border: 1px solid var(--color-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-muted);
-      font-size: 12px;
-      letter-spacing: 0.1em;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .disc-jacket-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s;
+    }
+
+    .disc-item:hover .disc-jacket-wrap img { transform: scale(1.04); }
+
+    .disc-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 3px 8px;
     }
 
     .disc-type {
@@ -363,9 +381,94 @@
       margin-bottom: 4px;
     }
 
-    .disc-title { font-size: 14px; font-weight: 700; }
+    .disc-title { font-size: 14px; font-weight: 700; line-height: 1.4; }
 
     .disc-date { font-size: 12px; color: var(--color-muted); margin-top: 4px; }
+
+    /* ===== DISCOGRAPHY モーダル ===== */
+    .disc-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+
+    .disc-modal-overlay.active { opacity: 1; pointer-events: all; }
+
+    .disc-modal-container {
+      background: #0a2040;
+      border: 1px solid var(--color-border);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.95);
+      transition: transform 0.25s ease;
+    }
+
+    .disc-modal-overlay.active .disc-modal-container { transform: scale(1); }
+
+    .disc-modal-jacket { width: 100%; }
+    .disc-modal-jacket img { display: block; width: 100%; height: auto; }
+
+    .disc-modal-header {
+      display: flex;
+      justify-content: flex-end;
+      padding: 14px 20px 0;
+    }
+
+    .disc-modal-close {
+      background: none;
+      border: 1px solid var(--color-border);
+      color: var(--color-muted);
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .disc-modal-close:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+    .disc-modal-info { padding: 20px 28px 32px; }
+
+    .disc-modal-type {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .disc-modal-title {
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .disc-modal-date { font-size: 12px; color: var(--color-muted); margin-bottom: 20px; }
+
+    .disc-modal-divider { width: 160px; height: 1px; background: var(--color-accent); margin-bottom: 20px; }
+
+    .disc-modal-desc {
+      font-size: 13px;
+      color: var(--color-muted);
+      line-height: 1.9;
+    }
+
+    .disc-modal-desc a { color: var(--color-gold); text-decoration: underline; }
+    .disc-modal-desc a:hover { opacity: 0.8; }
 
     /* ===== MEMBERS ===== */
     #members { background: var(--color-surface); }
@@ -581,6 +684,7 @@
 
       /* Disc */
       .disc-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+      .disc-modal-info { padding: 16px 20px 24px; }
 
       /* Members */
       .members-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
@@ -824,32 +928,8 @@
   <section class="section" id="discography">
     <div class="section-inner">
       <h2 class="section-title">おんげん <span>ディスコグラフィー</span></h2>
-      <div class="disc-grid">
-        <div class="disc-item">
-          <div class="disc-cover">JACKET</div>
-          <div class="disc-type">Single</div>
-          <div class="disc-title">ダミーシングルA</div>
-          <div class="disc-date">2026.04.01</div>
-        </div>
-        <div class="disc-item">
-          <div class="disc-cover">JACKET</div>
-          <div class="disc-type">Single</div>
-          <div class="disc-title">ダミーシングルB</div>
-          <div class="disc-date">2025.11.20</div>
-        </div>
-        <div class="disc-item">
-          <div class="disc-cover">JACKET</div>
-          <div class="disc-type">Album</div>
-          <div class="disc-title">ダミーアルバム</div>
-          <div class="disc-date">2025.06.10</div>
-        </div>
-        <div class="disc-item">
-          <div class="disc-cover">JACKET</div>
-          <div class="disc-type">EP</div>
-          <div class="disc-title">ダミーEP</div>
-          <div class="disc-date">2024.09.05</div>
-        </div>
-      </div>
+      <!-- ディスコグラフィーはスプレッドシート(CSV)から自動取得して表示 -->
+      <div class="disc-grid" id="discGrid"></div>
     </div>
   </section>
 
@@ -948,6 +1028,23 @@
         <div class="live-modal-divider-bottom"></div>
       </div>
       <div class="live-modal-flyer" id="liveModalFlyerWrap"></div>
+    </div>
+  </div>
+
+  <!-- ===== ディスコグラフィーモーダル ===== -->
+  <div class="disc-modal-overlay" id="discModal">
+    <div class="disc-modal-container">
+      <div class="disc-modal-jacket" id="discModalJacketWrap"></div>
+      <div class="disc-modal-header">
+        <button class="disc-modal-close" id="discModalClose">✕</button>
+      </div>
+      <div class="disc-modal-info">
+        <div class="disc-modal-type" id="discModalType"></div>
+        <div class="disc-modal-title" id="discModalTitle"></div>
+        <div class="disc-modal-date" id="discModalDate"></div>
+        <div class="disc-modal-divider"></div>
+        <div class="disc-modal-desc" id="discModalDesc"></div>
+      </div>
     </div>
   </div>
 
@@ -1234,6 +1331,101 @@
     }
 
     fetchAndRenderLive();
+
+    /* ===== ディスコグラフィー（スプレッドシート連携） ===== */
+    const TYPE_LABEL = { album: 'Album', single: 'Single', dvd: 'DVD' };
+
+    function formatDesc(text) {
+      if (!text) return '';
+      return text.split(/(https?:\/\/\S+)/g).map((part, i) => {
+        if (i % 2 === 1) {
+          const safe = part.replace(/&/g, '&amp;');
+          return `<a href="${safe}" target="_blank" rel="noopener">${safe}</a>`;
+        }
+        return part.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+      }).join('');
+    }
+
+    const discModal = document.getElementById('discModal');
+
+    function openDiscModal(disc) {
+      const jacketWrap = document.getElementById('discModalJacketWrap');
+      jacketWrap.innerHTML = '';
+      if (disc.jacket_image) {
+        const img = document.createElement('img');
+        img.src = `images/discography/${disc.jacket_image}`;
+        img.alt = disc.title;
+        jacketWrap.appendChild(img);
+        jacketWrap.style.display = '';
+      } else {
+        jacketWrap.style.display = 'none';
+      }
+
+      document.getElementById('discModalType').textContent  = TYPE_LABEL[disc.type] || disc.type;
+      document.getElementById('discModalTitle').textContent = disc.title;
+      document.getElementById('discModalDate').textContent  = disc.release_date.replace(/-/g, '.');
+      document.getElementById('discModalDesc').innerHTML    = formatDesc(disc.description);
+
+      discModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDiscModal() {
+      discModal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('discModalClose').addEventListener('click', closeDiscModal);
+    discModal.addEventListener('click', e => { if (e.target === discModal) closeDiscModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDiscModal(); });
+
+    function renderDiscGrid(items) {
+      const grid = document.getElementById('discGrid');
+      grid.innerHTML = '';
+      items.forEach(disc => {
+        const item = document.createElement('div');
+        item.className = 'disc-item';
+        const badge = disc.availability === 'on_sale'
+          ? '<span class="disc-badge">NOW ON SALE</span>' : '';
+        const jacket = disc.jacket_image
+          ? `<img src="images/discography/${disc.jacket_image}" alt="${disc.title}">`
+          : '';
+        item.innerHTML = `
+          <div class="disc-jacket-wrap">${jacket}${badge}</div>
+          <div class="disc-type">${TYPE_LABEL[disc.type] || disc.type}</div>
+          <div class="disc-title">${disc.title}</div>
+          <div class="disc-date">${disc.release_date.replace(/-/g, '.')}</div>
+        `;
+        item.addEventListener('click', () => openDiscModal(disc));
+        grid.appendChild(item);
+      });
+    }
+
+    async function fetchAndRenderDisc() {
+      const WORKER_URL = 'https://zetsurinhaguki-live.heroes777rock.workers.dev/?type=discography';
+      try {
+        const res  = await fetch(WORKER_URL);
+        if (!res.ok) throw new Error(res.status);
+        const rows = parseCSV(await res.text());
+        if (rows.length < 2) return;
+
+        const headers = rows[0].map(h => h.trim());
+        const items = rows.slice(1)
+          .map(row => {
+            const o = {};
+            headers.forEach((h, i) => { o[h] = (row[i] || '').trim(); });
+            return o;
+          })
+          .filter(d => d.title)
+          .sort((a, b) => b.release_date.localeCompare(a.release_date));
+
+        renderDiscGrid(items);
+      } catch (e) {
+        console.error('ディスコグラフィー取得エラー:', e);
+      }
+    }
+
+    fetchAndRenderDisc();
   </script>
 </body>
 </html>
