@@ -590,6 +590,136 @@
       .disc-grid { grid-template-columns: repeat(3, 1fr); }
       .members-grid { grid-template-columns: repeat(4, 1fr); }
     }
+
+    /* ===== LIVE モーダル ===== */
+    .live-item { cursor: pointer; transition: background 0.15s; }
+    .live-item:hover { background: rgba(255,255,255,0.04); }
+
+    .live-empty {
+      color: var(--color-muted);
+      font-size: 14px;
+      padding: 32px 0;
+      text-align: center;
+    }
+
+    .live-btn {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      border: 1px solid var(--color-border);
+      padding: 6px 14px;
+      color: var(--color-muted);
+      white-space: nowrap;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .live-item:hover .live-btn {
+      border-color: var(--color-text);
+      color: var(--color-text);
+    }
+
+    .live-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 200;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+
+    .live-modal-overlay.active { opacity: 1; pointer-events: all; }
+
+    .live-modal-container {
+      background: #0a2040;
+      border: 1px solid var(--color-border);
+      width: 100%;
+      max-width: 640px;
+      max-height: 92vh;
+      overflow-y: auto;
+      transform: translateY(40px);
+      transition: transform 0.3s ease;
+    }
+
+    .live-modal-overlay.active .live-modal-container { transform: translateY(0); }
+
+    .live-modal-header {
+      display: flex;
+      justify-content: flex-end;
+      padding: 14px 20px 0;
+    }
+
+    .live-modal-close {
+      background: none;
+      border: 1px solid var(--color-border);
+      color: var(--color-muted);
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .live-modal-close:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+    .live-modal-body { padding: 16px 32px 28px; }
+
+    .live-modal-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .live-modal-date { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+
+    .live-modal-title {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .live-modal-divider { width: 200px; height: 1px; background: var(--color-accent); margin-bottom: 20px; }
+    .live-modal-divider-bottom { width: 200px; height: 1px; background: var(--color-accent); margin-top: 20px; }
+
+    .live-modal-rows { display: flex; flex-direction: column; gap: 12px; }
+
+    .live-modal-row {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 16px;
+      font-size: 14px;
+      align-items: baseline;
+    }
+
+    .live-modal-row-label { font-size: 11px; letter-spacing: 0.1em; color: var(--color-accent); }
+    .live-modal-row-value { color: var(--color-text); }
+
+    .live-modal-detail {
+      font-size: 13px;
+      color: var(--color-muted);
+      margin-top: 16px;
+      line-height: 1.8;
+    }
+
+    .live-detail-link { color: var(--color-gold); text-decoration: underline; }
+    .live-detail-link:hover { opacity: 0.8; }
+
+    .live-modal-flyer { width: 100%; border-top: 1px solid var(--color-border); }
+    .live-modal-flyer img { display: block; width: 100%; height: auto; }
+
+    @media (max-width: 767px) {
+      .live-modal-body { padding: 16px 20px 24px; }
+      .live-modal-container { max-height: 90vh; }
+    }
   </style>
 </head>
 <body>
@@ -685,44 +815,8 @@
   <section class="section" id="live">
     <div class="section-inner">
       <h2 class="section-title">らいぶ <span>ライブ情報</span></h2>
-      <ul class="live-list">
-        <li class="live-item">
-          <div class="live-date-block">
-            <div class="month">Sep</div>
-            <div class="day">12</div>
-            <div class="year">2026</div>
-          </div>
-          <div class="live-info">
-            <div class="live-title">絶リン★ハグキ ワンマンライブ「仮タイトル」</div>
-            <div class="live-venue">東京 〇〇HALL</div>
-          </div>
-          <a class="live-ticket" href="#">TICKET</a>
-        </li>
-        <li class="live-item">
-          <div class="live-date-block">
-            <div class="month">Oct</div>
-            <div class="day">03</div>
-            <div class="year">2026</div>
-          </div>
-          <div class="live-info">
-            <div class="live-title">〇〇フェス2026 出演</div>
-            <div class="live-venue">大阪 〇〇野外ステージ</div>
-          </div>
-          <a class="live-ticket" href="#">TICKET</a>
-        </li>
-        <li class="live-item">
-          <div class="live-date-block">
-            <div class="month">Nov</div>
-            <div class="day">28</div>
-            <div class="year">2026</div>
-          </div>
-          <div class="live-info">
-            <div class="live-title">年末スペシャルライブ（仮）</div>
-            <div class="live-venue">名古屋 〇〇CLUB</div>
-          </div>
-          <a class="live-ticket" href="#">TICKET</a>
-        </li>
-      </ul>
+      <!-- ライブ一覧はスプレッドシート(CSV)から自動取得して表示 -->
+      <div class="live-list" id="liveList"></div>
     </div>
   </section>
 
@@ -839,7 +933,25 @@
     </div>
   </section>
 
-  <!-- ===== フッター ===== */
+  <!-- ===== ライブモーダル ===== -->
+  <div class="live-modal-overlay" id="liveModal">
+    <div class="live-modal-container">
+      <div class="live-modal-header">
+        <button class="live-modal-close" id="liveModalClose">✕</button>
+      </div>
+      <div class="live-modal-body">
+        <div class="live-modal-eyebrow">Live Info</div>
+        <div class="live-modal-date" id="liveModalDate"></div>
+        <div class="live-modal-title" id="liveModalTitle"></div>
+        <div class="live-modal-divider"></div>
+        <div class="live-modal-rows" id="liveModalRows"></div>
+        <div class="live-modal-divider-bottom"></div>
+      </div>
+      <div class="live-modal-flyer" id="liveModalFlyerWrap"></div>
+    </div>
+  </div>
+
+  <!-- ===== フッター ===== -->
   <footer id="footer">
     <div class="footer-logo"><img src="images/top/top_logo.png" alt="絶リン★ハグキ"></div>
     <div class="footer-sns">
@@ -955,6 +1067,173 @@
     window.addEventListener('scroll', () => {
       scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
     });
+
+    /* ===== ライブ情報（スプレッドシート連携） ===== */
+    function parseCSV(text) {
+      const rows = [];
+      let row = [], field = '', inQ = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQ) {
+          if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+          else if (c === '"') { inQ = false; }
+          else { field += c; }
+        } else {
+          if      (c === '"')  { inQ = true; }
+          else if (c === ',')  { row.push(field); field = ''; }
+          else if (c === '\r') { /* skip */ }
+          else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+          else                 { field += c; }
+        }
+      }
+      if (field || row.length) { row.push(field); rows.push(row); }
+      return rows;
+    }
+
+    function parseDateObj(str) {
+      const s = str.trim().replace(/\//g, '-');
+      if (/^\d{8}$/.test(s)) return new Date(`${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`);
+      return new Date(s);
+    }
+
+    function todayStrJST() {
+      const n = new Date();
+      return new Date(n.getTime() + (9 * 60 - n.getTimezoneOffset()) * 60000).toISOString().slice(0, 10);
+    }
+
+    function formatTicketDetail(text) {
+      if (!text) return '';
+      return text.split(/(https?:\/\/\S+)/g).map((part, i) => {
+        if (i % 2 === 1) {
+          const safe = part.replace(/&/g, '&amp;');
+          return `<a href="${safe}" target="_blank" rel="noopener" class="live-detail-link">${safe}</a>`;
+        }
+        return part.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+      }).join('');
+    }
+
+    const liveModal = document.getElementById('liveModal');
+
+    function openLiveModal(live) {
+      const d   = parseDateObj(live.date);
+      const dow = ['日','月','火','水','木','金','土'][d.getDay()];
+      document.getElementById('liveModalDate').textContent  = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日(${dow})`;
+      document.getElementById('liveModalTitle').textContent = live.title;
+
+      const rowsEl = document.getElementById('liveModalRows');
+      rowsEl.innerHTML = [
+        { label: '会場', value: live.venue },
+        { label: '時間', value: live.time },
+        { label: '料金', value: live.ticket },
+        { label: '出演', value: live.lineup ? live.lineup.split('/').map(s => s.trim()).join(' / ') : '' },
+      ].filter(r => r.value).map(r => `
+        <div class="live-modal-row">
+          <span class="live-modal-row-label">${r.label}</span>
+          <span class="live-modal-row-value">${r.value}</span>
+        </div>`).join('');
+
+      if (live.ticket_detail) {
+        const det = document.createElement('div');
+        det.className = 'live-modal-detail';
+        det.innerHTML = formatTicketDetail(live.ticket_detail);
+        rowsEl.appendChild(det);
+      }
+
+      const flyerWrap = document.getElementById('liveModalFlyerWrap');
+      flyerWrap.innerHTML = '';
+      [live.images_poster, live.images_lineup].forEach(fn => {
+        if (!fn) return;
+        const img = document.createElement('img');
+        img.src = `images/live/${fn}`;
+        img.alt = live.title;
+        flyerWrap.appendChild(img);
+      });
+      flyerWrap.style.display = flyerWrap.children.length ? '' : 'none';
+
+      document.querySelector('.live-modal-container').scrollTop = 0;
+      liveModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLiveModal() {
+      liveModal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('liveModalClose').addEventListener('click', closeLiveModal);
+    liveModal.addEventListener('click', e => { if (e.target === liveModal) closeLiveModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLiveModal(); });
+
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    function renderLiveList(items) {
+      const list = document.getElementById('liveList');
+      list.innerHTML = '';
+      if (!items.length) {
+        const msg = document.createElement('p');
+        msg.className = 'live-empty';
+        msg.textContent = '現在予定されているライブはありません';
+        list.appendChild(msg);
+        return;
+      }
+      items.forEach(live => {
+        const d    = parseDateObj(live.date);
+        const dow  = ['日','月','火','水','木','金','土'][d.getDay()];
+        const item = document.createElement('div');
+        item.className = 'live-item';
+        item.innerHTML = `
+          <div class="live-date-block">
+            <div class="month">${MONTHS[d.getMonth()]}</div>
+            <div class="day">${String(d.getDate()).padStart(2,'0')}</div>
+            <div class="year">${d.getFullYear()}</div>
+          </div>
+          <div class="live-info">
+            <div class="live-title">${live.title}</div>
+            <div class="live-venue">${live.venue}</div>
+          </div>
+          <span class="live-btn">Detail</span>
+        `;
+        item.addEventListener('click', () => openLiveModal(live));
+        list.appendChild(item);
+      });
+    }
+
+    async function fetchAndRenderLive() {
+      // ★ Workerデプロイ後にURLをここに入れてください
+      const WORKER_URL = 'https://zetsurinhaguki-live.heroes777rock.workers.dev/';
+      try {
+        const res  = await fetch(WORKER_URL);
+        if (!res.ok) throw new Error(res.status);
+        const rows = parseCSV(await res.text());
+        if (rows.length < 2) { renderLiveList([]); return; }
+
+        const headers = rows[0].map(h => h.trim());
+        const today   = todayStrJST();
+        const now     = new Date();
+
+        const items = rows.slice(1)
+          .map(row => {
+            const o = {};
+            headers.forEach((h, i) => { o[h] = (row[i] || '').trim(); });
+            return o;
+          })
+          .filter(live => {
+            if (live.status !== 'show') return false;
+            if (live.date.replace(/\//g, '-') < today) return false;
+            if (!live.public_date) return true;
+            const pub = new Date(live.public_date.trim().replace(/\//g, '-').replace(' ', 'T') + ':00+09:00');
+            return pub <= now;
+          })
+          .sort((a, b) => a.date.localeCompare(b.date));
+
+        renderLiveList(items);
+      } catch (e) {
+        console.error('ライブデータ取得エラー:', e);
+        renderLiveList([]);
+      }
+    }
+
+    fetchAndRenderLive();
   </script>
 </body>
 </html>
