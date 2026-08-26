@@ -1112,18 +1112,18 @@
           ライブ出演・取材・メディア掲載などのご依頼、その他ご質問は<br>
           下記フォームよりお気軽にお問い合わせください。
         </p>
-        <form class="contact-form" onsubmit="return false;">
+        <form class="contact-form" id="contactForm">
           <div class="form-group">
             <label>お名前</label>
-            <input type="text" placeholder="山田 太郎">
+            <input type="text" id="contactName" placeholder="山田 太郎">
           </div>
           <div class="form-group">
             <label>メールアドレス</label>
-            <input type="email" placeholder="example@email.com">
+            <input type="email" id="contactEmail" placeholder="example@email.com">
           </div>
           <div class="form-group">
             <label>お問い合わせ種別</label>
-            <select>
+            <select id="contactType">
               <option value="">選択してください</option>
               <option>ライブ出演依頼</option>
               <option>メディア・取材</option>
@@ -1132,7 +1132,7 @@
           </div>
           <div class="form-group">
             <label>内容</label>
-            <textarea placeholder="お問い合わせ内容をご記入ください"></textarea>
+            <textarea id="contactBody" placeholder="お問い合わせ内容をご記入ください"></textarea>
           </div>
           <button class="btn-submit" type="submit">送信する</button>
         </form>
@@ -1563,6 +1563,31 @@
         console.error('ディスコグラフィー取得エラー:', e);
       }
     }
+
+    /* ===== コンタクトフォーム ===== */
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name  = document.getElementById('contactName').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+      const type  = document.getElementById('contactType').value;
+      const body  = document.getElementById('contactBody').value.trim();
+
+      if (!name || !email || !type || !body) {
+        alert('すべての項目を入力してください');
+        return;
+      }
+
+      const subject = encodeURIComponent('【お問い合わせ】' + type + '：' + name);
+      const mailBody = encodeURIComponent(
+        'お名前：' + name + '\n' +
+        'メールアドレス：' + email + '\n' +
+        '種別：' + type + '\n\n' +
+        '内容：\n' + body
+      );
+
+      window.location.href =
+        'mailto:zetsurinhaguki.official@gmail.com?subject=' + subject + '&body=' + mailBody;
+    });
 
     fetchAndRenderDisc();
 
