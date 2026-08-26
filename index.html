@@ -475,25 +475,37 @@
 
     .members-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 32px;
+      max-width: 520px;
+      margin: 0 auto;
     }
 
-    .member-card { text-align: center; }
+    .member-card {
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .member-card:hover { transform: translateY(-4px); }
 
     .member-photo {
       width: 100%;
       aspect-ratio: 3/4;
-      background: var(--color-border);
+      overflow: hidden;
       border: 1px solid var(--color-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-muted);
-      font-size: 12px;
-      letter-spacing: 0.08em;
       margin-bottom: 14px;
     }
+
+    .member-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s;
+    }
+
+    .member-card:hover .member-photo img { transform: scale(1.03); }
 
     .member-part {
       font-size: 10px;
@@ -509,6 +521,123 @@
       font-size: 11px;
       color: var(--color-muted);
       margin-top: 2px;
+    }
+
+    .member-hint {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: var(--color-accent);
+      margin-top: 8px;
+      opacity: 0.8;
+    }
+
+    /* ===== MEMBER MODAL ===== */
+    .member-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      z-index: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .member-modal-overlay.active { opacity: 1; pointer-events: all; }
+
+    .member-modal-container {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      width: calc(100% - 32px);
+      max-width: 680px;
+      max-height: 88vh;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      transform: scale(0.95);
+      transition: transform 0.2s;
+    }
+
+    .member-modal-overlay.active .member-modal-container { transform: scale(1); }
+
+    .member-modal-photo { overflow: hidden; }
+
+    .member-modal-photo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .member-modal-body {
+      padding: 24px 20px 28px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .member-modal-close {
+      align-self: flex-end;
+      background: none;
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .member-modal-close:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+    .member-modal-part {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--color-accent);
+      margin-bottom: 4px;
+    }
+
+    .member-modal-name {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+    }
+
+    .member-modal-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--color-accent);
+      margin-bottom: 20px;
+    }
+
+    .member-modal-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .member-modal-row {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 8px;
+      align-items: baseline;
+    }
+
+    .member-modal-row-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--color-accent);
+    }
+
+    .member-modal-row-value {
+      font-size: 14px;
+      color: var(--color-text);
     }
 
     /* ===== CONTACT ===== */
@@ -687,12 +816,16 @@
       .disc-modal-info { padding: 16px 20px 24px; }
 
       /* Members */
-      .members-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .members-grid { gap: 16px; }
+      .member-modal-container {
+        grid-template-columns: 1fr;
+        max-height: 90vh;
+      }
+      .member-modal-photo { max-height: 260px; }
     }
 
     @media (min-width: 768px) and (max-width: 1023px) {
       .disc-grid { grid-template-columns: repeat(3, 1fr); }
-      .members-grid { grid-template-columns: repeat(4, 1fr); }
     }
 
     /* ===== LIVE モーダル ===== */
@@ -933,33 +1066,41 @@
     <div class="section-inner">
       <h2 class="section-title">めんばあ <span>メンバー</span></h2>
       <div class="members-grid">
-        <div class="member-card">
-          <div class="member-photo">PHOTO</div>
-          <div class="member-part">Vocal</div>
-          <div class="member-name">仮名 太郎</div>
-          <div class="member-name-read">Kanna Taro</div>
+        <div class="member-card" id="card-okkazawa">
+          <div class="member-photo">
+            <img src="images/members/okka.png" alt="サンパウロ岡澤">
+          </div>
+          <div class="member-part">うた</div>
+          <div class="member-name">サンパウロ岡澤</div>
+          <div class="member-name-read">Sampaullo Okazawa</div>
+          <div class="member-hint">▶ PROFILE</div>
         </div>
-        <div class="member-card">
-          <div class="member-photo">PHOTO</div>
-          <div class="member-part">Guitar</div>
-          <div class="member-name">仮名 次郎</div>
-          <div class="member-name-read">Kanna Jiro</div>
-        </div>
-        <div class="member-card">
-          <div class="member-photo">PHOTO</div>
-          <div class="member-part">Bass</div>
-          <div class="member-name">仮名 三郎</div>
-          <div class="member-name-read">Kanna Saburo</div>
-        </div>
-        <div class="member-card">
-          <div class="member-photo">PHOTO</div>
-          <div class="member-part">Drums</div>
-          <div class="member-name">仮名 四郎</div>
-          <div class="member-name-read">Kanna Shiro</div>
+        <div class="member-card" id="card-suzuki">
+          <div class="member-photo">
+            <img src="images/members/suzuki.png" alt="ゲッツー！鈴木">
+          </div>
+          <div class="member-part">ぎたー</div>
+          <div class="member-name">ゲッツー！鈴木</div>
+          <div class="member-name-read">Gettsu! Suzuki</div>
+          <div class="member-hint">▶ PROFILE</div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- ===== MEMBER MODAL ===== -->
+  <div class="member-modal-overlay" id="memberModal">
+    <div class="member-modal-container" id="memberModalContainer">
+      <div class="member-modal-photo" id="memberModalPhoto"></div>
+      <div class="member-modal-body">
+        <button class="member-modal-close" id="memberModalClose">✕</button>
+        <div class="member-modal-part" id="memberModalPart"></div>
+        <div class="member-modal-name" id="memberModalName"></div>
+        <div class="member-modal-divider"></div>
+        <div class="member-modal-rows" id="memberModalRows"></div>
+      </div>
+    </div>
+  </div>
 
   <!-- ===== CONTACT ===== -->
   <section class="section" id="contact">
@@ -1423,6 +1564,73 @@
     }
 
     fetchAndRenderDisc();
+
+    /* ===== メンバーモーダル ===== */
+    const MEMBERS = [
+      {
+        id: 'okkazawa',
+        cardId: 'card-okkazawa',
+        img: 'images/members/okka.png',
+        part: 'うた',
+        name: 'サンパウロ岡澤',
+        rows: [
+          { label: '生年月日', value: '7月31日' },
+          { label: '身長',     value: '175cm' },
+          { label: '血液型',   value: 'A型' },
+          { label: '出身地',   value: '茨城県' },
+          { label: '得意技',   value: '面白いやつ' },
+        ],
+      },
+      {
+        id: 'suzuki',
+        cardId: 'card-suzuki',
+        img: 'images/members/suzuki.png',
+        part: 'ぎたー',
+        name: 'ゲッツー！鈴木',
+        rows: [
+          { label: '生年月日', value: '6月22日' },
+          { label: '身長',     value: '174cm' },
+          { label: '血液型',   value: 'A型' },
+          { label: '出身地',   value: '東京都' },
+          { label: '得意技',   value: '何をやっても地味になる' },
+        ],
+      },
+    ];
+
+    const memberModal       = document.getElementById('memberModal');
+    const memberModalPhoto  = document.getElementById('memberModalPhoto');
+    const memberModalPart   = document.getElementById('memberModalPart');
+    const memberModalName   = document.getElementById('memberModalName');
+    const memberModalRows   = document.getElementById('memberModalRows');
+    const memberModalClose  = document.getElementById('memberModalClose');
+
+    function openMemberModal(member) {
+      memberModalPhoto.innerHTML = `<img src="${member.img}" alt="${member.name}">`;
+      memberModalPart.textContent = member.part;
+      memberModalName.textContent = member.name;
+      memberModalRows.innerHTML = member.rows.map(r =>
+        `<div class="member-modal-row">
+           <div class="member-modal-row-label">${r.label}</div>
+           <div class="member-modal-row-value">${r.value}</div>
+         </div>`
+      ).join('');
+      memberModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMemberModal() {
+      memberModal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    MEMBERS.forEach(m => {
+      document.getElementById(m.cardId).addEventListener('click', () => openMemberModal(m));
+    });
+
+    memberModalClose.addEventListener('click', closeMemberModal);
+    memberModal.addEventListener('click', e => { if (e.target === memberModal) closeMemberModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMemberModal(); });
+
   </script>
 </body>
 </html>
