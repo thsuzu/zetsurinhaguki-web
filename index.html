@@ -241,6 +241,47 @@
 
     .slide-dot.active { background: var(--color-accent); }
 
+    /* ===== SNS BANNER TICKER ===== */
+    .banner-ticker {
+      overflow: hidden;
+      background: rgba(0,0,0,0.22);
+      border-top: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--color-border);
+      padding: 14px 0;
+    }
+
+    .banner-track {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      width: max-content;
+      animation: banner-scroll 26s linear infinite;
+    }
+
+    .banner-ticker:hover .banner-track {
+      animation-play-state: paused;
+    }
+
+    .banner-item {
+      flex-shrink: 0;
+      display: block;
+      opacity: 0.82;
+      transition: opacity 0.2s;
+    }
+
+    .banner-item:hover { opacity: 1; }
+
+    .banner-item img {
+      height: 60px;
+      width: auto;
+      display: block;
+    }
+
+    @keyframes banner-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
     /* ===== NEWS ===== */
     #news { background: var(--color-bg); }
 
@@ -1024,6 +1065,31 @@
 
     <div class="slide-dots" id="slideDots"></div>
   </section>
+
+  <!-- ===== SNS BANNER TICKER ===== -->
+  <div class="banner-ticker">
+    <div class="banner-track">
+      <a href="https://lin.ee/Vb3WwqO" target="_blank" rel="noopener" class="banner-item">
+        <img src="images/banner/ko_line_b.png" alt="LINE">
+      </a>
+      <a href="https://x.com/zetsurinhaguki" target="_blank" rel="noopener" class="banner-item">
+        <img src="images/banner/x_b.png" alt="X (Twitter)">
+      </a>
+      <a href="https://youtube.com/channel/UCdPlyiKbU8Jad4WJMH_fuJg?si=1AgqtcWRXmuOa_DS" target="_blank" rel="noopener" class="banner-item">
+        <img src="images/banner/yt_b.png" alt="YouTube">
+      </a>
+      <!-- 無限ループのための複製 -->
+      <a href="https://lin.ee/Vb3WwqO" target="_blank" rel="noopener" class="banner-item">
+        <img src="images/banner/ko_line_b.png" alt="LINE">
+      </a>
+      <a href="https://x.com/zetsurinhaguki" target="_blank" rel="noopener" class="banner-item">
+        <img src="images/banner/x_b.png" alt="X (Twitter)">
+      </a>
+      <a href="https://youtube.com/channel/UCdPlyiKbU8Jad4WJMH_fuJg?si=1AgqtcWRXmuOa_DS" target="_blank" rel="noopener" class="banner-item">
+        <img src="images/banner/yt_b.png" alt="YouTube">
+      </a>
+    </div>
+  </div>
 
   <!-- ===== NEWS ===== -->
   <section class="section" id="news">
