@@ -6,6 +6,7 @@
 const CSV_URLS = {
   live: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRtG0-yXHi3Z55kFF83w9ycI7HSIRc7g_dQ-gV3e3YJjw9L7bwc4pvyXs3wPTviohpsQxVShbEAEZoa/pub?gid=0&single=true&output=csv',
   discography: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRBD_IrnElyb2elxVEqdshLT0HN793xaz5AtrBrAMiSXW1pnpV6KePs2IVSiJ6wS8wl-cM_1HssAzkm/pub?gid=0&single=true&output=csv',
+  goods: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT0bGJE2c0ocbx1sZj98HUhsILzqFmXQbHqSAGag_UeJb5WiJaOGbEfHEGL_dLrp5Fbpgnh9lUC1Ses/pub?gid=0&single=true&output=csv',
 };
 
 export default {

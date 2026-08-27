@@ -334,6 +334,9 @@
     /* ===== DISCOGRAPHY ===== */
     #discography { background: var(--color-bg); }
 
+    /* ===== GOODS ===== */
+    #goods { background: var(--color-surface); }
+
     .disc-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -970,6 +973,7 @@
         <li><a href="#news">にゅうす</a></li>
         <li><a href="#live">らいぶ</a></li>
         <li><a href="#discography">おんげん</a></li>
+        <li><a href="#goods">あいてむ</a></li>
         <li><a href="#kouryukai">こうりゅうかい</a></li>
         <li><a href="#members">めんばあ</a></li>
         <li><a href="#contact">れんらく</a></li>
@@ -985,6 +989,7 @@
     <a href="#news"        onclick="closeDrawer()">にゅうす</a>
     <a href="#live"        onclick="closeDrawer()">らいぶ</a>
     <a href="#discography"  onclick="closeDrawer()">おんげん</a>
+    <a href="#goods"       onclick="closeDrawer()">あいてむ</a>
     <a href="#kouryukai"   onclick="closeDrawer()">こうりゅうかい</a>
     <a href="#members"     onclick="closeDrawer()">めんばあ</a>
     <a href="#contact"     onclick="closeDrawer()">れんらく</a>
@@ -1049,6 +1054,14 @@
       <h2 class="section-title">おんげん <span>ディスコグラフィー</span></h2>
       <!-- ディスコグラフィーはスプレッドシート(CSV)から自動取得して表示 -->
       <div class="disc-grid" id="discGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===== GOODS ===== -->
+  <section class="section" id="goods">
+    <div class="section-inner">
+      <h2 class="section-title">あいてむ <span>グッズ</span></h2>
+      <div class="disc-grid" id="goodsGrid"></div>
     </div>
   </section>
 
@@ -1171,6 +1184,23 @@
         <div class="disc-modal-date" id="discModalDate"></div>
         <div class="disc-modal-divider"></div>
         <div class="disc-modal-desc" id="discModalDesc"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== グッズモーダル ===== -->
+  <div class="disc-modal-overlay" id="goodsModal">
+    <div class="disc-modal-container">
+      <div class="disc-modal-jacket" id="goodsModalJacketWrap"></div>
+      <div class="disc-modal-header">
+        <button class="disc-modal-close" id="goodsModalClose">✕</button>
+      </div>
+      <div class="disc-modal-info">
+        <div class="disc-modal-type" id="goodsModalAvail"></div>
+        <div class="disc-modal-title" id="goodsModalTitle"></div>
+        <div class="disc-modal-date" id="goodsModalDate"></div>
+        <div class="disc-modal-divider"></div>
+        <div class="disc-modal-desc" id="goodsModalDesc"></div>
       </div>
     </div>
   </div>
@@ -1516,7 +1546,7 @@
 
     document.getElementById('discModalClose').addEventListener('click', closeDiscModal);
     discModal.addEventListener('click', e => { if (e.target === discModal) closeDiscModal(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDiscModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDiscModal(); closeGoodsModal(); } });
 
     function renderDiscGrid(items) {
       const grid = document.getElementById('discGrid');
@@ -1563,6 +1593,88 @@
         console.error('ディスコグラフィー取得エラー:', e);
       }
     }
+
+    /* ===== グッズ（スプレッドシート連携） ===== */
+    const GOODS_AVAIL_LABEL = { on_sale: 'ON SALE', sold_out: 'SOLD OUT' };
+
+    const goodsModal = document.getElementById('goodsModal');
+
+    function openGoodsModal(item) {
+      const jacketWrap = document.getElementById('goodsModalJacketWrap');
+      jacketWrap.innerHTML = '';
+      if (item.jacket_image) {
+        const img = document.createElement('img');
+        img.src = `images/ITEM/${item.jacket_image}`;
+        img.alt = item.title;
+        jacketWrap.appendChild(img);
+        jacketWrap.style.display = '';
+      } else {
+        jacketWrap.style.display = 'none';
+      }
+
+      document.getElementById('goodsModalAvail').textContent  = GOODS_AVAIL_LABEL[item.availability] || item.availability;
+      document.getElementById('goodsModalTitle').textContent  = item.title;
+      document.getElementById('goodsModalDate').textContent   = item.release_date.replace(/-/g, '.');
+      document.getElementById('goodsModalDesc').innerHTML     = formatDesc(item.description);
+
+      goodsModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeGoodsModal() {
+      goodsModal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('goodsModalClose').addEventListener('click', closeGoodsModal);
+    goodsModal.addEventListener('click', e => { if (e.target === goodsModal) closeGoodsModal(); });
+
+    function renderGoodsGrid(items) {
+      const grid = document.getElementById('goodsGrid');
+      grid.innerHTML = '';
+      items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'disc-item';
+        const badge = item.availability === 'on_sale'
+          ? '<span class="disc-badge">ON SALE</span>' : '';
+        const jacket = item.jacket_image
+          ? `<img src="images/ITEM/${item.jacket_image}" alt="${item.title}">`
+          : '';
+        el.innerHTML = `
+          <div class="disc-jacket-wrap">${jacket}${badge}</div>
+          <div class="disc-title">${item.title}</div>
+          <div class="disc-date">${item.release_date.replace(/-/g, '.')}</div>
+        `;
+        el.addEventListener('click', () => openGoodsModal(item));
+        grid.appendChild(el);
+      });
+    }
+
+    async function fetchAndRenderGoods() {
+      const WORKER_URL = 'https://zetsurinhaguki-live.heroes777rock.workers.dev/?type=goods';
+      try {
+        const res  = await fetch(WORKER_URL);
+        if (!res.ok) throw new Error(res.status);
+        const rows = parseCSV(await res.text());
+        if (rows.length < 2) return;
+
+        const headers = rows[0].map(h => h.trim());
+        const items = rows.slice(1)
+          .map(row => {
+            const o = {};
+            headers.forEach((h, i) => { o[h] = (row[i] || '').trim(); });
+            return o;
+          })
+          .filter(d => d.title)
+          .sort((a, b) => b.release_date.localeCompare(a.release_date));
+
+        renderGoodsGrid(items);
+      } catch (e) {
+        console.error('グッズデータ取得エラー:', e);
+      }
+    }
+
+    fetchAndRenderGoods();
 
     /* ===== コンタクトフォーム ===== */
     document.getElementById('contactForm').addEventListener('submit', function(e) {
