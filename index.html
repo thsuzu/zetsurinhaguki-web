@@ -280,7 +280,12 @@
       gap: 40px;
       width: max-content;
       animation: banner-scroll 26s linear infinite;
+      animation-play-state: paused;
       will-change: transform;
+    }
+
+    .banner-ticker.ready .banner-track {
+      animation-play-state: running;
     }
 
     .banner-ticker:hover .banner-track {
@@ -1411,6 +1416,15 @@
         }
       }
     });
+
+    /* ===== バナーアニメーション: 画像ロード完了後に開始 ===== */
+    (function() {
+      const ticker = document.querySelector('.banner-ticker');
+      const imgs   = [...document.querySelectorAll('.banner-item img')];
+      Promise.all(imgs.map(img =>
+        img.complete ? Promise.resolve() : new Promise(r => { img.onload = r; img.onerror = r; })
+      )).then(() => { if (ticker) ticker.classList.add('ready'); });
+    })();
 
     /* ===== ハンバーガーメニュー ===== */
     const toggle = document.getElementById('navToggle');
