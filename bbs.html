@@ -212,14 +212,15 @@ input[type="submit"]:active {
 const API = 'https://zetsurinhaguki-bbs-api.heroes777rock.workers.dev';
 
 function formatDate(str) {
-  const d = new Date(str);
+  const d = new Date(str + 'Z');
   const pad = n => String(n).padStart(2, '0');
-  return d.getFullYear() + '/' +
-    pad(d.getMonth() + 1) + '/' +
-    pad(d.getDate()) + ' ' +
-    pad(d.getHours()) + ':' +
-    pad(d.getMinutes()) + ':' +
-    pad(d.getSeconds());
+  const jst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+  return jst.getUTCFullYear() + '/' +
+    pad(jst.getUTCMonth() + 1) + '/' +
+    pad(jst.getUTCDate()) + ' ' +
+    pad(jst.getUTCHours()) + ':' +
+    pad(jst.getUTCMinutes()) + ':' +
+    pad(jst.getUTCSeconds());
 }
 
 function escHtml(s) {
