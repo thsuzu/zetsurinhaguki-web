@@ -256,6 +256,7 @@
       gap: 40px;
       width: max-content;
       animation: banner-scroll 26s linear infinite;
+      will-change: transform;
     }
 
     .banner-ticker:hover .banner-track {
@@ -1332,6 +1333,7 @@
       function next() { goTo(current + 1); }
 
       function start() {
+        clearInterval(timer);
         timer = setInterval(next, interval);
       }
 
@@ -1354,6 +1356,7 @@
     let pcShow, mobileShow;
 
     function setupSlideshows() {
+      if (pcShow) pcShow.stop();
       if (isMobile()) {
         pcShow = initSlideshow('slideshowMobile', 'slideDots', 4000);
       } else {
@@ -1375,15 +1378,26 @@
 
     setupSlideshows();
 
-    /* リサイズ時にリロードで対応（簡易実装） */
+    /* リサイズ時に再初期化 */
     let resizeTimer;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
-        // ドットを再構築するためページリロードなしで再初期化
         document.getElementById('slideDots').innerHTML = '';
         setupSlideshows();
       }, 400);
+    });
+
+    /* iOS Safari バックグラウンド復帰時にバナーアニメーションをリセット */
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        const track = document.querySelector('.banner-track');
+        if (track) {
+          track.style.animation = 'none';
+          track.offsetHeight; // reflow
+          track.style.animation = '';
+        }
+      }
     });
 
     /* ===== ハンバーガーメニュー ===== */
