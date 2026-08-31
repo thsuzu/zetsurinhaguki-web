@@ -7,6 +7,9 @@
   <meta name="description" content="茨城県出身のサンパウロ岡澤を中心としたユニット、絶リン★ハグキ公式サイト。ライブ情報、リリース情報など最新情報をお届けします。">
   <link rel="canonical" href="https://zetsurinhaguki.net/">
   <link rel="preconnect" href="https://zetsurinhaguki-live.heroes777rock.workers.dev">
+  <link rel="preload" as="image" href="images/banner/ko_line_b.png">
+  <link rel="preload" as="image" href="images/banner/x_b.png">
+  <link rel="preload" as="image" href="images/banner/yt_b.png">
   <link rel="icon" type="image/png" sizes="32x32" href="images/logo/favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="images/logo/fabi.png">
   <link rel="icon" type="image/png" sizes="192x192" href="images/logo/favicon-192.png">
@@ -1429,6 +1432,26 @@
       scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
     });
 
+    /* ===== 共通: タイムアウト付きfetchリトライ ===== */
+    async function fetchWithRetry(url, maxRetries = 3, timeoutMs = 10000) {
+      let lastError;
+      for (let i = 0; i < maxRetries; i++) {
+        const ctrl = new AbortController();
+        const tid  = setTimeout(() => ctrl.abort(), timeoutMs);
+        try {
+          const res = await fetch(url, { signal: ctrl.signal });
+          clearTimeout(tid);
+          if (res.ok) return res;
+          throw new Error(`HTTP ${res.status}`);
+        } catch (e) {
+          clearTimeout(tid);
+          lastError = e;
+          if (i < maxRetries - 1) await new Promise(r => setTimeout(r, 1200 * (i + 1)));
+        }
+      }
+      throw lastError;
+    }
+
     /* ===== ライブ情報（スプレッドシート連携） ===== */
     function parseCSV(text) {
       const rows = [];
@@ -1560,11 +1583,9 @@
     }
 
     async function fetchAndRenderLive() {
-      // ★ Workerデプロイ後にURLをここに入れてください
       const WORKER_URL = 'https://zetsurinhaguki-live.heroes777rock.workers.dev/';
       try {
-        const res  = await fetch(WORKER_URL);
-        if (!res.ok) throw new Error(res.status);
+        const res  = await fetchWithRetry(WORKER_URL);
         const rows = parseCSV(await res.text());
         if (rows.length < 2) { renderLiveList([]); return; }
 
@@ -1668,8 +1689,7 @@
     async function fetchAndRenderDisc() {
       const WORKER_URL = 'https://zetsurinhaguki-live.heroes777rock.workers.dev/?type=discography';
       try {
-        const res  = await fetch(WORKER_URL);
-        if (!res.ok) throw new Error(res.status);
+        const res  = await fetchWithRetry(WORKER_URL);
         const rows = parseCSV(await res.text());
         if (rows.length < 2) return;
 
@@ -1749,8 +1769,7 @@
       const WORKER_URL = 'https://zetsurinhaguki-live.heroes777rock.workers.dev/?type=goods';
       const loading = document.getElementById('goodsLoading');
       try {
-        const res  = await fetch(WORKER_URL);
-        if (!res.ok) throw new Error(res.status);
+        const res  = await fetchWithRetry(WORKER_URL);
         const rows = parseCSV(await res.text());
         if (loading) loading.remove();
         if (rows.length < 2) return;
@@ -1767,7 +1786,9 @@
 
         renderGoodsGrid(items);
       } catch (e) {
-        if (loading) loading.textContent = '読み込みに失敗しました。しばらくしてからリロードしてください。';
+        if (loading) {
+          loading.innerHTML = '読み込みに失敗しました。<br><button onclick="fetchAndRenderGoods()" style="margin-top:12px;padding:8px 20px;background:var(--color-accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:14px;">再試行する</button>';
+        }
         console.error('グッズデータ取得エラー:', e);
       }
     }

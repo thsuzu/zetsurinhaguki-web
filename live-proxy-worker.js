@@ -44,7 +44,7 @@ export default {
         headers: {
           'Content-Type': 'text/csv; charset=utf-8',
           'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'no-store',
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60',
         },
       });
     } catch (e) {
