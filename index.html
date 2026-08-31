@@ -6,6 +6,7 @@
   <title>絶リン★ハグキ | Official Website</title>
   <meta name="description" content="茨城県出身のサンパウロ岡澤を中心としたユニット、絶リン★ハグキ公式サイト。ライブ情報、リリース情報など最新情報をお届けします。">
   <link rel="canonical" href="https://zetsurinhaguki.net/">
+  <link rel="preconnect" href="https://zetsurinhaguki-live.heroes777rock.workers.dev">
   <link rel="icon" type="image/png" sizes="32x32" href="images/logo/favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="images/logo/fabi.png">
   <link rel="icon" type="image/png" sizes="192x192" href="images/logo/favicon-192.png">
@@ -1148,7 +1149,9 @@
   <section class="section" id="goods">
     <div class="section-inner">
       <h2 class="section-title">あいてむ <span>グッズ</span></h2>
-      <div class="disc-grid" id="goodsGrid"></div>
+      <div class="disc-grid" id="goodsGrid">
+        <p id="goodsLoading" style="color:var(--color-muted);font-size:14px;grid-column:1/-1;text-align:center;padding:32px 0;">読み込み中...</p>
+      </div>
     </div>
   </section>
 
@@ -1744,10 +1747,12 @@
 
     async function fetchAndRenderGoods() {
       const WORKER_URL = 'https://zetsurinhaguki-live.heroes777rock.workers.dev/?type=goods';
+      const loading = document.getElementById('goodsLoading');
       try {
         const res  = await fetch(WORKER_URL);
         if (!res.ok) throw new Error(res.status);
         const rows = parseCSV(await res.text());
+        if (loading) loading.remove();
         if (rows.length < 2) return;
 
         const headers = rows[0].map(h => h.trim());
@@ -1762,6 +1767,7 @@
 
         renderGoodsGrid(items);
       } catch (e) {
+        if (loading) loading.textContent = '読み込みに失敗しました。しばらくしてからリロードしてください。';
         console.error('グッズデータ取得エラー:', e);
       }
     }
