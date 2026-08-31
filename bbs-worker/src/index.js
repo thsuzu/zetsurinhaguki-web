@@ -1,7 +1,11 @@
-const ALLOWED_ORIGIN = 'https://thsuzu.github.io';
+const ALLOWED_ORIGINS = [
+  'https://zetsurinhaguki.net',
+  'http://zetsurinhaguki.net',
+  'https://thsuzu.github.io',
+];
 
 function corsHeaders(origin) {
-  const allow = origin === ALLOWED_ORIGIN ? origin : ALLOWED_ORIGIN;
+  const allow = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
     'Access-Control-Allow-Origin': allow,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
