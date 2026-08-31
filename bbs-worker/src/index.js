@@ -42,6 +42,11 @@ export default {
         return Response.json({ error: '本文を入力してください' }, { status: 400, headers: cors });
       }
 
+      const urlPattern = /https?:\/\/|www\./i;
+      if (urlPattern.test(name) || urlPattern.test(body)) {
+        return Response.json({ error: 'URLを含む書き込みは禁止されています' }, { status: 400, headers: cors });
+      }
+
       await env.DB.prepare(
         'INSERT INTO posts (name, body) VALUES (?, ?)'
       ).bind(name, body).run();
