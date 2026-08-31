@@ -376,20 +376,6 @@
       margin-top: 4px;
     }
 
-    .live-ticket {
-      font-size: 12px;
-      letter-spacing: 0.1em;
-      border: 1px solid var(--color-border);
-      padding: 6px 14px;
-      color: var(--color-muted);
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    .live-ticket:hover {
-      border-color: var(--color-text);
-      color: var(--color-text);
-    }
-
     /* ===== DISCOGRAPHY ===== */
     #discography { background: var(--color-bg); }
 
@@ -885,7 +871,6 @@
         grid-template-columns: 70px 1fr;
         gap: 12px;
       }
-      .live-ticket { display: none; }
       .live-date-block .day { font-size: 28px; }
 
       /* Disc */
@@ -1371,7 +1356,7 @@
     // 画面幅で使うスライドショーを決定
     const isMobile = () => window.innerWidth < 768;
 
-    let pcShow, mobileShow;
+    let pcShow;
 
     function setupSlideshows() {
       if (pcShow) pcShow.stop();
